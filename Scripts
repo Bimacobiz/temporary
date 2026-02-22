@@ -1,51 +1,71 @@
--- DimCalendar
-CREATE TABLE DimCalendar (
-    CalendarKey INT PRIMARY KEY,
-    FullDate DATE NOT NULL,
-    DayOfWeek VARCHAR(10) NOT NULL,
-    DayOfMonth INT NOT NULL,
-    Month INT NOT NULL,
-    Quarter INT NOT NULL,
-    Year INT NOT NULL
+/* Load DimCalendar */
+INSERT INTO DimCalendar (CalendarKey, FullDate, DayOfWeek, DayOfMonth, Month, Quarter, Year)
+SELECT DISTINCT
+    (YEAR(o.OrderDate) * 10000) + (MONTH(o.OrderDate) * 100) + DAY(o.OrderDate) AS CalendarKey,
+    CAST(o.OrderDate AS DATE) AS FullDate,
+    DATENAME(WEEKDAY, o.OrderDate) AS DayOfWeek,
+    DAY(o.OrderDate) AS DayOfMonth,
+    MONTH(o.OrderDate) AS Month,
+    DATEPART(QUARTER, o.OrderDate) AS Quarter,
+    YEAR(o.OrderDate) AS Year
+FROM dbo.Orders o
+WHERE NOT EXISTS (
+    SELECT 1 FROM DimCalendar dc
+    WHERE dc.FullDate = CAST(o.OrderDate AS DATE)
 );
 
--- DimProduct
-CREATE TABLE DimProduct (
-    ProductKey INT IDENTITY(1,1) PRIMARY KEY,
-    ProductID INT NOT NULL,
-    ProductName VARCHAR(100) NOT NULL,
-    ProductPrice DECIMAL(10,2) NOT NULL,
-    ProductVendorName VARCHAR(100) NOT NULL,
-    ProductCategoryName VARCHAR(100) NOT NULL
+/* Load DimProduct */
+INSERT INTO DimProduct (ProductID, ProductName, ProductPrice, ProductVendorName, ProductCategoryName)
+SELECT
+    p.ProductID,
+    p.ProductName,
+    p.ProductPrice,
+    v.VendorName,
+    c.CategoryName
+FROM dbo.Product p
+JOIN dbo.Vendor v   ON v.VendorID = p.VendorID
+JOIN dbo.Category c ON c.CategoryID = p.CategoryID
+WHERE NOT EXISTS (
+    SELECT 1 FROM DimProduct dp
+    WHERE dp.ProductID = p.ProductID
 );
 
--- DimStore
-CREATE TABLE DimStore (
-    StoreKey INT IDENTITY(1,1) PRIMARY KEY,
-    StoreID INT NOT NULL,
-    StoreZip VARCHAR(10),
-    StoreRegionName VARCHAR(100) NOT NULL
+/* Load DimStore */
+INSERT INTO DimStore (StoreID, StoreZip, StoreRegionName)
+SELECT
+    s.StoreID,
+    s.StoreZip,
+    s.StoreRegionName
+FROM dbo.Store s
+WHERE NOT EXISTS (
+    SELECT 1 FROM DimStore ds
+    WHERE ds.StoreID = s.StoreID
 );
 
--- DimCustomer
-CREATE TABLE DimCustomer (
-    CustomerKey INT IDENTITY(1,1) PRIMARY KEY,
-    CustomerID INT NOT NULL,
-    CustomerName VARCHAR(100) NOT NULL,
-    CustomerZip VARCHAR(10)
+/* Load DimCustomer */
+INSERT INTO DimCustomer (CustomerID, CustomerName, CustomerZip)
+SELECT
+    cu.CustomerID,
+    cu.CustomerName,
+    cu.CustomerZip
+FROM dbo.Customer cu
+WHERE NOT EXISTS (
+    SELECT 1 FROM DimCustomer dc
+    WHERE dc.CustomerID = cu.CustomerID
 );
 
--- FactSales
-CREATE TABLE FactSales (
-    SalesKey BIGINT IDENTITY(1,1) PRIMARY KEY,
-    CalendarKey INT NOT NULL,
-    StoreKey INT NOT NULL,
-    ProductKey INT NOT NULL,
-    CustomerKey INT NOT NULL,
-    DollarsSold DECIMAL(12,2) NOT NULL,
-    UnitsSold INT NOT NULL,
-    FOREIGN KEY (CalendarKey) REFERENCES DimCalendar(CalendarKey),
-    FOREIGN KEY (StoreKey) REFERENCES DimStore(StoreKey),
-    FOREIGN KEY (ProductKey) REFERENCES DimProduct(ProductKey),
-    FOREIGN KEY (CustomerKey) REFERENCES DimCustomer(CustomerKey)
-);
+/* Load FactSales */
+INSERT INTO FactSales (CalendarKey, StoreKey, ProductKey, CustomerKey, DollarsSold, UnitsSold)
+SELECT
+    cal.CalendarKey,
+    st.StoreKey,
+    pr.ProductKey,
+    cust.CustomerKey,
+    CAST(od.Quantity * od.UnitPrice AS DECIMAL(12,2)) AS DollarsSold,
+    od.Quantity AS UnitsSold
+FROM dbo.Orders o
+JOIN dbo.OrderDetail od ON od.OrderID = o.OrderID
+JOIN DimCalendar cal    ON cal.FullDate = CAST(o.OrderDate AS DATE)
+JOIN DimStore st        ON st.StoreID = o.StoreID
+JOIN DimCustomer cust   ON cust.CustomerID = o.CustomerID
+JOIN DimProduct pr      ON pr.ProductID = od.ProductID;
