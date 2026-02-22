@@ -1,71 +1,14 @@
-/* Load DimCalendar */
-INSERT INTO DimCalendar (CalendarKey, FullDate, DayOfWeek, DayOfMonth, Month, Quarter, Year)
-SELECT DISTINCT
-    (YEAR(o.OrderDate) * 10000) + (MONTH(o.OrderDate) * 100) + DAY(o.OrderDate) AS CalendarKey,
-    CAST(o.OrderDate AS DATE) AS FullDate,
-    DATENAME(WEEKDAY, o.OrderDate) AS DayOfWeek,
-    DAY(o.OrderDate) AS DayOfMonth,
-    MONTH(o.OrderDate) AS Month,
-    DATEPART(QUARTER, o.OrderDate) AS Quarter,
-    YEAR(o.OrderDate) AS Year
-FROM dbo.Orders o
-WHERE NOT EXISTS (
-    SELECT 1 FROM DimCalendar dc
-    WHERE dc.FullDate = CAST(o.OrderDate AS DATE)
-);
+SELECT COLUMN_NAME, DATA_TYPE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'Product'
+ORDER BY ORDINAL_POSITION;
 
-/* Load DimProduct */
-INSERT INTO DimProduct (ProductID, ProductName, ProductPrice, ProductVendorName, ProductCategoryName)
-SELECT
-    p.ProductID,
-    p.ProductName,
-    p.ProductPrice,
-    v.VendorName,
-    c.CategoryName
-FROM dbo.Product p
-JOIN dbo.Vendor v   ON v.VendorID = p.VendorID
-JOIN dbo.Category c ON c.CategoryID = p.CategoryID
-WHERE NOT EXISTS (
-    SELECT 1 FROM DimProduct dp
-    WHERE dp.ProductID = p.ProductID
-);
+SELECT COLUMN_NAME, DATA_TYPE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'Store'
+ORDER BY ORDINAL_POSITION;
 
-/* Load DimStore */
-INSERT INTO DimStore (StoreID, StoreZip, StoreRegionName)
-SELECT
-    s.StoreID,
-    s.StoreZip,
-    s.StoreRegionName
-FROM dbo.Store s
-WHERE NOT EXISTS (
-    SELECT 1 FROM DimStore ds
-    WHERE ds.StoreID = s.StoreID
-);
-
-/* Load DimCustomer */
-INSERT INTO DimCustomer (CustomerID, CustomerName, CustomerZip)
-SELECT
-    cu.CustomerID,
-    cu.CustomerName,
-    cu.CustomerZip
-FROM dbo.Customer cu
-WHERE NOT EXISTS (
-    SELECT 1 FROM DimCustomer dc
-    WHERE dc.CustomerID = cu.CustomerID
-);
-
-/* Load FactSales */
-INSERT INTO FactSales (CalendarKey, StoreKey, ProductKey, CustomerKey, DollarsSold, UnitsSold)
-SELECT
-    cal.CalendarKey,
-    st.StoreKey,
-    pr.ProductKey,
-    cust.CustomerKey,
-    CAST(od.Quantity * od.UnitPrice AS DECIMAL(12,2)) AS DollarsSold,
-    od.Quantity AS UnitsSold
-FROM dbo.Orders o
-JOIN dbo.OrderDetail od ON od.OrderID = o.OrderID
-JOIN DimCalendar cal    ON cal.FullDate = CAST(o.OrderDate AS DATE)
-JOIN DimStore st        ON st.StoreID = o.StoreID
-JOIN DimCustomer cust   ON cust.CustomerID = o.CustomerID
-JOIN DimProduct pr      ON pr.ProductID = od.ProductID;
+SELECT COLUMN_NAME, DATA_TYPE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'Customer'
+ORDER BY ORDINAL_POSITION;
