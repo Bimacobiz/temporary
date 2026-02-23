@@ -1,4 +1,79 @@
-SELECT TABLE_NAME, COLUMN_NAME
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE COLUMN_NAME LIKE '%Region%'
-ORDER BY TABLE_NAME, COLUMN_NAME;
+/* Load DimCalendar */
+INSERT INTO DimCalendar (CalendarKey, FullDate, DayOfWeek, DayOfMonth, Month, Quarter, Year)
+SELECT DISTINCT
+    (YEAR(o.OrderDate) * 10000) + (MONTH(o.OrderDate) * 100) + DAY(o.OrderDate),
+    CAST(o.OrderDate AS DATE),
+    DATENAME(WEEKDAY, o.OrderDate),
+    DAY(o.OrderDate),
+    MONTH(o.OrderDate),
+    DATEPART(QUARTER, o.OrderDate),
+    YEAR(o.OrderDate)
+FROM Orders o
+WHERE NOT EXISTS (
+    SELECT 1 FROM DimCalendar dc
+    WHERE dc.FullDate = CAST(o.OrderDate AS DATE)
+);
+
+/* Load DimProduct */
+INSERT INTO DimProduct (ProductID, ProductName, ProductPrice, ProductVendorName, ProductCategoryName)
+SELECT
+    p.ProductID,
+    p.ProductName,
+    p.Price,
+    v.VendorName,
+    c.CategoryName
+FROM Product p
+JOIN Vendor v   ON v.VendorID = p.VendorID
+JOIN Category c ON c.CategoryID = p.CategoryID
+WHERE NOT EXISTS (
+    SELECT 1 FROM DimProduct dp
+    WHERE dp.ProductID = p.ProductID
+);
+
+/* Load DimCustomer */
+INSERT INTO DimCustomer (CustomerID, CustomerName, CustomerZip)
+SELECT
+    c.CustomerID,
+    c.CustomerName,
+    c.ZipCode
+FROM Customer c
+WHERE NOT EXISTS (
+    SELECT 1 FROM DimCustomer dc
+    WHERE dc.CustomerID = c.CustomerID
+);
+
+/* Load DimStore */
+INSERT INTO DimStore (StoreID, StoreZip, StoreRegionName)
+SELECT
+    s.StoreID,
+    s.ZipCode,
+    r.RegionName
+FROM Store s
+JOIN Region r ON r.RegionID = s.RegionID
+WHERE NOT EXISTS (
+    SELECT 1 FROM DimStore ds
+    WHERE ds.StoreID = s.StoreID
+);
+
+/* Load FactSales */
+INSERT INTO FactSales (CalendarKey, StoreKey, ProductKey, CustomerKey, DollarsSold, UnitsSold)
+SELECT
+    cal.CalendarKey,
+    st.StoreKey,
+    pr.ProductKey,
+    cu.CustomerKey,
+    CAST(od.Quantity * od.UnitPrice AS DECIMAL(12,2)),
+    od.Quantity
+FROM Orders o
+JOIN OrderDetail od ON od.OrderID = o.OrderID
+JOIN DimCalendar cal ON cal.FullDate = CAST(o.OrderDate AS DATE)
+JOIN DimStore st     ON st.StoreID = o.StoreID
+JOIN DimCustomer cu  ON cu.CustomerID = o.CustomerID
+JOIN DimProduct pr   ON pr.ProductID = od.ProductID;
+
+/* Verification */
+SELECT COUNT(*) AS DimCalendarRows FROM DimCalendar;
+SELECT COUNT(*) AS DimProductRows  FROM DimProduct;
+SELECT COUNT(*) AS DimStoreRows    FROM DimStore;
+SELECT COUNT(*) AS DimCustomerRows FROM DimCustomer;
+SELECT COUNT(*) AS FactSalesRows   FROM FactSales;
