@@ -69,7 +69,17 @@ JOIN OrderDetail od ON od.OrderID = o.OrderID
 JOIN DimCalendar cal ON cal.FullDate = CAST(o.OrderDate AS DATE)
 JOIN DimStore st     ON st.StoreID = o.StoreID
 JOIN DimCustomer cu  ON cu.CustomerID = o.CustomerID
-JOIN DimProduct pr   ON pr.ProductID = od.ProductID;
+JOIN DimProduct pr   ON pr.ProductID = od.ProductID
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM FactSales fs
+    WHERE fs.CalendarKey = cal.CalendarKey
+      AND fs.StoreKey = st.StoreKey
+      AND fs.ProductKey = pr.ProductKey
+      AND fs.CustomerKey = cu.CustomerKey
+      AND fs.UnitsSold = od.Quantity
+      AND fs.DollarsSold = CAST(od.Quantity * od.UnitPrice AS DECIMAL(12,2))
+);
 
 /* Verification */
 SELECT COUNT(*) AS DimCalendarRows FROM DimCalendar;
