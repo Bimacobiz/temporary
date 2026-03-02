@@ -1,14 +1,14 @@
 {
-  "name": "Mountain Peak Lodge",
+  "name": "City Central Inn",
   "address": {
-    "street": "45 Alpine Trail",
-    "city": "Denver",
-    "state": "CO",
-    "zip": "80202"
+    "street": "800 Downtown Ave",
+    "city": "Phoenix",
+    "state": "AZ",
+    "zip": "85004"
   },
   "roomRates": [
-    { "roomType": "Suite", "ratePerNight": 220 },
-    { "roomType": "Cabin", "ratePerNight": 180 }
+    { "roomType": "Economy", "ratePerNight": 95 },
+    { "roomType": "Business", "ratePerNight": 140 }
   ],
-  "roomTypes": ["Suite", "Cabin"]
+  "roomTypes": ["Economy", "Business"]
 }
