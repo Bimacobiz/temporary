@@ -1,43 +1,14 @@
-use hotelDB
-
-db.hotels.insertMany([
 {
-  name: "Sunset Paradise Hotel",
-  address: {
-    street: "123 Beach Road",
-    city: "Miami",
-    state: "FL",
-    zip: "33101"
+  "name": "City Central Inn",
+  "address": {
+    "street": "789 Downtown St",
+    "city": "New York",
+    "state": "NY",
+    "zip": "10001"
   },
-  room_types: [
-    { type: "Single", rate: 120 },
-    { type: "Double", rate: 180 }
-  ]
-},
-{
-  name: "Mountain View Resort",
-  address: {
-    street: "456 Hilltop Ave",
-    city: "Denver",
-    state: "CO",
-    zip: "80014"
-  },
-  room_types: [
-    { type: "Single", rate: 150 },
-    { type: "Suite", rate: 250 }
-  ]
-},
-{
-  name: "City Lights Inn",
-  address: {
-    street: "789 Downtown St",
-    city: "New York",
-    state: "NY",
-    zip: "10001"
-  },
-  room_types: [
-    { type: "Double", rate: 200 },
-    { type: "Suite", rate: 300 }
-  ]
+  "roomRates": [
+    { "roomType": "Double", "ratePerNight": 200 },
+    { "roomType": "Suite", "ratePerNight": 300 }
+  ],
+  "roomTypes": ["Double", "Suite"]
 }
-])
