@@ -1,3 +1,5 @@
+use hotelDB
+
 db.hotels.insertMany([
 {
   name: "Sunset Paradise Hotel",
