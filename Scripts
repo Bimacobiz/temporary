@@ -1,14 +1,41 @@
-
-SELECT
-    SUM(fs.UnitsSold) AS TotalUnitsSold
-FROM FactSales fs
-JOIN DimCalendar cal ON cal.CalendarKey = fs.CalendarKey
-JOIN DimProduct p    ON p.ProductKey = fs.ProductKey
-JOIN DimStore s      ON s.StoreKey = fs.StoreKey
-WHERE
-    cal.DayOfWeek = 'Wednesday'
-    AND cal.Year = 2024
-    AND cal.Quarter = 1
-    AND p.ProductCategoryName = 'Footwear'
-    AND p.ProductVendorName = 'Mountain King'
-    AND s.StoreRegionName = 'Chicagoland';
+db.hotels.insertMany([
+{
+  name: "Sunset Paradise Hotel",
+  address: {
+    street: "123 Beach Road",
+    city: "Miami",
+    state: "FL",
+    zip: "33101"
+  },
+  room_types: [
+    { type: "Single", rate: 120 },
+    { type: "Double", rate: 180 }
+  ]
+},
+{
+  name: "Mountain View Resort",
+  address: {
+    street: "456 Hilltop Ave",
+    city: "Denver",
+    state: "CO",
+    zip: "80014"
+  },
+  room_types: [
+    { type: "Single", rate: 150 },
+    { type: "Suite", rate: 250 }
+  ]
+},
+{
+  name: "City Lights Inn",
+  address: {
+    street: "789 Downtown St",
+    city: "New York",
+    state: "NY",
+    zip: "10001"
+  },
+  room_types: [
+    { type: "Double", rate: 200 },
+    { type: "Suite", rate: 300 }
+  ]
+}
+])
