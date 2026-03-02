@@ -1,14 +1,14 @@
 {
-  "name": "City Central Inn",
+  "name": "Mountain Peak Lodge",
   "address": {
-    "street": "789 Downtown St",
-    "city": "New York",
-    "state": "NY",
-    "zip": "10001"
+    "street": "45 Alpine Trail",
+    "city": "Denver",
+    "state": "CO",
+    "zip": "80202"
   },
   "roomRates": [
-    { "roomType": "Double", "ratePerNight": 200 },
-    { "roomType": "Suite", "ratePerNight": 300 }
+    { "roomType": "Suite", "ratePerNight": 220 },
+    { "roomType": "Cabin", "ratePerNight": 180 }
   ],
-  "roomTypes": ["Double", "Suite"]
+  "roomTypes": ["Suite", "Cabin"]
 }
