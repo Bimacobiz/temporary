@@ -1,14 +1,4 @@
-{
-  "name": "City Central Inn",
-  "address": {
-    "street": "800 Downtown Ave",
-    "city": "Phoenix",
-    "state": "AZ",
-    "zip": "85004"
-  },
-  "roomRates": [
-    { "roomType": "Economy", "ratePerNight": 95 },
-    { "roomType": "Business", "ratePerNight": 140 }
-  ],
-  "roomTypes": ["Economy", "Business"]
-}
+SELECT *
+FROM Person.Person
+WHERE FirstName = 'John'
+FOR XML PATH;
