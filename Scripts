@@ -1,39 +1,4 @@
-BEGIN TRANSACTION;
-
-DECLARE @XML XML;
-DECLARE @hDoc INT;
-
--- Load XML file from disk
-SELECT @XML = CAST(BulkColumn AS XML)
-FROM OPENROWSET(
-    BULK 'C:\xmlTest.xml',
-    SINGLE_BLOB
-) AS x;
-
--- Prepare XML document
-EXEC sp_xml_preparedocument @hDoc OUTPUT, @XML;
-
--- Read data from XML
 SELECT *
-FROM OPENXML(@hDoc, '/row', 2)
-WITH
-(
-    BusinessEntityID INT,
-    PersonType NVARCHAR(2),
-    NameStyle BIT,
-    Title NVARCHAR(8),
-    FirstName NVARCHAR(50),
-    MiddleName NVARCHAR(50),
-    LastName NVARCHAR(50),
-    Suffix NVARCHAR(10),
-    EmailPromotion INT,
-    AdditionalContactInfo NVARCHAR(MAX),
-    Demographics NVARCHAR(MAX),
-    rowguid UNIQUEIDENTIFIER,
-    ModifiedDate DATETIME
-);
-
--- Remove document handle
-EXEC sp_xml_removedocument @hDoc;
-
-COMMIT TRANSACTION;
+FROM Person.Person
+WHERE FirstName = 'John'
+FOR XML PATH('row'), ROOT('Persons');
