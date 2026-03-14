@@ -1,7 +1,20 @@
+CREATE TABLE EmployeeHours (
+    LastName VARCHAR(50),
+    FirstName VARCHAR(50),
+    FullName AS (FirstName + ' ' + LastName) PERSISTED, -- auto-concatenated
+    JobTitle VARCHAR(100),
+    HireDate DATE,
+    Week1Hours INT,
+    Week2Hours INT,
+    Week3Hours INT,
+    Week4Hours INT
+);
+
 BULK INSERT EmployeeHours
 FROM 'C:\Users\rdp_user\Downloads\SYM-408-RS-ETLProcess-datafile-EmpHours.csv'
 WITH (
-    FIRSTROW = 2,
-    FIELDTERMINATOR = ',',
-    ROWTERMINATOR = '\n'
+    FIRSTROW = 2,              -- skip header row
+    FIELDTERMINATOR = ',',     -- comma-separated
+    ROWTERMINATOR = '\n',
+    TABLOCK
 );
