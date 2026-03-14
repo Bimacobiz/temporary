@@ -1,2 +1,8 @@
-SELECT COUNT(*) AS TotalRecords
-FROM EmployeeHours;
+BULK INSERT EmployeeHours
+FROM 'C:\SYM-408-RS-ETLProcess-datafile-EmpHours.csv'
+WITH (
+    FORMAT = 'CSV',
+    FIRSTROW = 2,
+    FIELDTERMINATOR = ',',
+    ROWTERMINATOR = '\n'
+);
