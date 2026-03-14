@@ -1,5 +1,14 @@
 -- Create table (if not exists)
-USE EmployeeHoursDB;
+CREATE TABLE EmployeeHours (
+    LastName VARCHAR(100),
+    FirstName VARCHAR(100),
+    JobTitle VARCHAR(200),
+    week1 INT,
+    Week2 INT,
+    Week3 INT,
+    Week4 INT,
+    hireDate DATE
+);
 
 -- Insert all records from CSV
 INSERT INTO EmployeeHours (LastName, FirstName, JobTitle, week1, Week2, Week3, Week4, hireDate) VALUES
