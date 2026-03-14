@@ -1,3 +1,9 @@
-CREATE DATABASE EmployeeHoursDB;
-GO
-USE EmployeeHoursDB;
+CREATE TABLE EmployeeHours (
+    FullName VARCHAR(100),
+    JobTitle VARCHAR(100),
+    Week1 INT,
+    Week2 INT,
+    Week3 INT,
+    Week4 INT,
+    HireDate DATE
+);
