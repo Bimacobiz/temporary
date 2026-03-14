@@ -1,14 +1,20 @@
 CREATE TABLE EmployeeHours (
     LastName VARCHAR(50),
     FirstName VARCHAR(50),
-    FullName AS (FirstName + ' ' + LastName) PERSISTED, -- auto-concatenated
+    FullName AS (FirstName + ' ' + LastName) PERSISTED,
     JobTitle VARCHAR(100),
-    HireDate DATE,
+    HireDateRaw VARCHAR(20),   -- load as text
     Week1Hours INT,
     Week2Hours INT,
     Week3Hours INT,
     Week4Hours INT
 );
+
+ALTER TABLE EmployeeHours
+ADD HireDate DATE;
+
+UPDATE EmployeeHours
+SET HireDate = CONVERT(DATE, HireDateRaw, 101);  -- 101 = mm/dd/yyyy
 
 BULK INSERT EmployeeHours
 FROM 'C:\Users\rdp_user\Downloads\SYM-408-RS-ETLProcess-datafile-EmpHours.csv'
