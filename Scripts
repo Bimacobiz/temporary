@@ -1,7 +1,7 @@
 CREATE TABLE EmployeeHours (
-    FirstName VARCHAR(50),
     LastName VARCHAR(50),
-    FullName VARCHAR(120),
+    FirstName VARCHAR(50),
+    FullName AS (FirstName + ' ' + LastName) PERSISTED, -- auto-concatenated
     JobTitle VARCHAR(100),
     HireDate DATE,
     Week1Hours INT,
