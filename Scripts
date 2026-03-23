@@ -1,26 +1,25 @@
-CREATE TABLE EmployeeHours (
-    LastName VARCHAR(50),
-    FirstName VARCHAR(50),
-    FullName AS (FirstName + ' ' + LastName) PERSISTED,
-    JobTitle VARCHAR(100),
-    HireDateRaw VARCHAR(20),   -- load as text
-    Week1Hours INT,
-    Week2Hours INT,
-    Week3Hours INT,
-    Week4Hours INT
-);
+SELECT 
+    Name,
+    CreditRating,
+    PreferredVendorStatus AS Preferred,
+    ActiveFlag AS Active
+FROM Purchasing.Vendor
+WHERE PreferredVendorStatus = 1
+AND ActiveFlag = 1;
 
-ALTER TABLE EmployeeHours
-ADD HireDate DATE;
 
-UPDATE EmployeeHours
-SET HireDate = CONVERT(DATE, HireDateRaw, 101);  -- 101 = mm/dd/yyyy
 
-BULK INSERT EmployeeHours
-FROM 'C:\Users\rdp_user\Downloads\SYM-408-RS-ETLProcess-datafile-EmpHours.csv'
-WITH (
-    FIRSTROW = 2,              -- skip header row
-    FIELDTERMINATOR = ',',     -- comma-separated
-    ROWTERMINATOR = '\n',
-    TABLOCK
-);
+SELECT 
+    v.Name,
+    v.CreditRating,
+    v.PreferredVendorStatus AS Preferred,
+    v.ActiveFlag AS Active,
+    pv.MinOrderQty,
+    pv.MaxOrderQty,
+    pv.OnOrderQty
+FROM Purchasing.Vendor v
+LEFT JOIN Purchasing.ProductVendor pv
+    ON v.BusinessEntityID = pv.BusinessEntityID
+WHERE v.PreferredVendorStatus = 1
+AND v.ActiveFlag = 1
+AND (pv.OnOrderQty = 0 OR pv.OnOrderQty IS NULL);
