@@ -1,25 +1,15 @@
-SELECT 
-    Name,
-    CreditRating,
-    PreferredVendorStatus AS Preferred,
-    ActiveFlag AS Active
-FROM Purchasing.Vendor
-WHERE PreferredVendorStatus = 1
-AND ActiveFlag = 1;
+DECLARE @StartDate DATE = '2020-01-01';
+DECLARE @EndDate DATE = '2025-12-31';
 
-
-
-SELECT 
-    v.Name,
-    v.CreditRating,
-    v.PreferredVendorStatus AS Preferred,
-    v.ActiveFlag AS Active,
-    pv.MinOrderQty,
-    pv.MaxOrderQty,
-    pv.OnOrderQty
-FROM Purchasing.Vendor v
-LEFT JOIN Purchasing.ProductVendor pv
-    ON v.BusinessEntityID = pv.BusinessEntityID
-WHERE v.PreferredVendorStatus = 1
-AND v.ActiveFlag = 1
-AND (pv.OnOrderQty = 0 OR pv.OnOrderQty IS NULL);
+WHILE @StartDate <= @EndDate
+BEGIN
+    INSERT INTO DimCalendar (DateKey, FullDate, Year, Month, Day)
+    VALUES (
+        CONVERT(INT, FORMAT(@StartDate,'yyyyMMdd')),
+        @StartDate,
+        YEAR(@StartDate),
+        MONTH(@StartDate),
+        DAY(@StartDate)
+    );
+    SET @StartDate = DATEADD(DAY,1,@StartDate);
+END
