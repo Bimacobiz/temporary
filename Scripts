@@ -1,1 +1,19 @@
-sp_help DimCalendar;
+USE CanyonRetailOperations;
+DECLARE @StartDate DATE = '2020-01-01';
+DECLARE @EndDate DATE = '2025-12-31';
+
+WHILE @StartDate <= @EndDate
+BEGIN
+    INSERT INTO DimCalendar (CalendarKey, FullDate, DayOfWeek, DayOfMonth, Month, Quarter, Year)
+    VALUES (
+        CONVERT(INT, FORMAT(@StartDate,'yyyyMMdd')),   -- CalendarKey
+        @StartDate,                                   -- FullDate
+        DATENAME(WEEKDAY, @StartDate),                -- DayOfWeek
+        DAY(@StartDate),                              -- DayOfMonth
+        MONTH(@StartDate),                            -- Month
+        DATEPART(QUARTER, @StartDate),                -- Quarter
+        YEAR(@StartDate)                              -- Year
+    );
+
+    SET @StartDate = DATEADD(DAY,1,@StartDate);
+END
