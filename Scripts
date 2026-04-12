@@ -1,7 +1,7 @@
-INSERT INTO Employee (empName, empGender, empPhone, empDOB, empWorkLocation)
-VALUES
-('Alice Johnson', 'Female', '555-1234', '1990-05-14', 'Phoenix'),
-('Brian Smith', 'Male', '555-5678', '1985-09-23', 'Denver'),
-('Catherine Lee', 'Female', '555-8765', '1992-12-01', 'Phoenix'),
-('David Kim', 'Male', '555-4321', '1988-07-19', 'Denver'),
-('Elena Garcia', 'Other', '555-2468', '1995-03-30', 'Phoenix');
+CREATE TABLE Employee_Phoenix AS
+SELECT * FROM Employee
+WHERE empWorkLocation = 'Phoenix';
+
+CREATE TABLE Employee_Denver AS
+SELECT * FROM Employee
+WHERE empWorkLocation = 'Denver';
