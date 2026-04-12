@@ -1,5 +1,5 @@
 USE EmployeeHoursDB;
 
-SELECT empID, empName, empGender, empDOB
-INTO Employee_Personal
+SELECT empID, empPhone, empWorkLocation
+INTO Employee_Contact
 FROM Employee;
