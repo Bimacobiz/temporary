@@ -1,11 +1,3 @@
-USE EmployeeHoursDB;
-
-SELECT *
-INTO Employee_Phoenix
-FROM Employee
-WHERE empWorkLocation = 'Phoenix';
-
-SELECT *
-INTO Employee_Denver
-FROM Employee
-WHERE empWorkLocation = 'Denver';
+CREATE TABLE Employee_Personal AS
+SELECT empID, empName, empGender, empDOB
+FROM Employee;
