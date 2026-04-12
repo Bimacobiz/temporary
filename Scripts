@@ -1,3 +1,5 @@
-CREATE TABLE Employee_Personal AS
+USE EmployeeHoursDB;
+
 SELECT empID, empName, empGender, empDOB
+INTO Employee_Personal
 FROM Employee;
