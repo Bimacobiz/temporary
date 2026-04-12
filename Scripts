@@ -1,5 +1,5 @@
 CREATE TABLE Employee (
-    empID INT PRIMARY KEY AUTO_INCREMENT,
+    empID INT AUTO_INCREMENT PRIMARY KEY,
     empName VARCHAR(100) NOT NULL,
     empGender ENUM('Male', 'Female', 'Other') NOT NULL,
     empPhone VARCHAR(20) UNIQUE,
