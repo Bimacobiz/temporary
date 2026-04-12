@@ -1,5 +1,10 @@
-USE EmployeeHoursDB;
-
-SELECT empID, empPhone, empWorkLocation
-INTO Employee_Contact
-FROM Employee;
+SELECT 
+    p.empID, 
+    p.empName, 
+    p.empGender, 
+    p.empDOB,
+    c.empPhone, 
+    c.empWorkLocation
+FROM Employee_Personal AS p
+INNER JOIN Employee_Contact AS c
+    ON p.empID = c.empID;
