@@ -1,7 +1,11 @@
-CREATE TABLE Employee_Phoenix AS
-SELECT * FROM Employee
+USE EmployeeHoursDB;
+
+SELECT *
+INTO Employee_Phoenix
+FROM Employee
 WHERE empWorkLocation = 'Phoenix';
 
-CREATE TABLE Employee_Denver AS
-SELECT * FROM Employee
+SELECT *
+INTO Employee_Denver
+FROM Employee
 WHERE empWorkLocation = 'Denver';
