@@ -1,8 +1,8 @@
 CREATE TABLE Employee (
-    empID INT AUTO_INCREMENT PRIMARY KEY,
+    empID INT IDENTITY(1,1) PRIMARY KEY,
     empName VARCHAR(100) NOT NULL,
-    empGender ENUM('Male', 'Female', 'Other') NOT NULL,
+    empGender VARCHAR(10) CHECK (empGender IN ('Male','Female','Other')) NOT NULL,
     empPhone VARCHAR(20) UNIQUE,
     empDOB DATE NOT NULL,
-    empWorkLocation ENUM('Phoenix', 'Denver') NOT NULL
+    empWorkLocation VARCHAR(20) CHECK (empWorkLocation IN ('Phoenix','Denver')) NOT NULL
 );
