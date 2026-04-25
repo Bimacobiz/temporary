@@ -1,10 +1,39 @@
-SELECT 
-    p.empID, 
-    p.empName, 
-    p.empGender, 
-    p.empDOB,
-    c.empPhone, 
-    c.empWorkLocation
-FROM Employee_Personal AS p
-INNER JOIN Employee_Contact AS c
-    ON p.empID = c.empID;
+#!/bin/bash
+
+# Create timestamp
+timestamp=$(date +%F_%H-%M-%S)
+
+# Define paths
+BASE=~/itm_linux/lab1
+LOGFILE=$BASE/logs/health_report_$timestamp.txt
+BACKUP=$BASE/backup/health_report_$timestamp.tar.gz
+
+# Create report
+{
+echo "===== SYSTEM HEALTH REPORT ====="
+echo "Date: $(date)"
+echo "Hostname: $(hostname)"
+echo ""
+
+echo "===== UPTIME ====="
+uptime
+echo ""
+
+echo "===== DISK USAGE ====="
+df -h
+echo ""
+
+echo "===== MEMORY USAGE ====="
+free -h
+echo ""
+
+echo "===== TOP 5 CPU PROCESSES ====="
+ps aux --sort=-%cpu | head -n 6
+
+} > $LOGFILE
+
+# Compress report
+tar -czf $BACKUP -C $BASE/logs $(basename $LOGFILE)
+
+echo "Report created: $LOGFILE"
+echo "Backup created: $BACKUP"
