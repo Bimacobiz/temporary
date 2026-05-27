@@ -1,39 +1,63 @@
-#!/bin/bash
+SELECT e.first_name, e.last_name, t.ticket_id, t.description, t.duration
+FROM employees e
+JOIN tickets t ON e.employee_id = t.employee_id
+WHERE t.employee_id IS NOT NULL
+ORDER BY e.first_name ASC, t.duration ASC;
 
-# Create timestamp
-timestamp=$(date +%F_%H-%M-%S)
 
-# Define paths
-BASE=~/itm_linux/lab1
-LOGFILE=$BASE/logs/health_report_$timestamp.txt
-BACKUP=$BASE/backup/health_report_$timestamp.tar.gz
+SELECT e.first_name, e.last_name, t.ticket_id, t.description, t.duration
+FROM employees e
+LEFT JOIN tickets t ON e.employee_id = t.employee_id
+WHERE t.employee_id IS NOT NULL OR t.ticket_id IS NULL
+ORDER BY e.first_name ASC, t.duration ASC;
 
-# Create report
-{
-echo "===== SYSTEM HEALTH REPORT ====="
-echo "Date: $(date)"
-echo "Hostname: $(hostname)"
-echo ""
 
-echo "===== UPTIME ====="
-uptime
-echo ""
+SELECT t.ticket_id, t.description, t.priority, t.status, e.first_name
+FROM tickets t
+LEFT JOIN employees e ON t.employee_id = e.employee_id
+ORDER BY t.status ASC, t.ticket_id ASC;
 
-echo "===== DISK USAGE ====="
-df -h
-echo ""
 
-echo "===== MEMORY USAGE ====="
-free -h
-echo ""
+SELECT t.ticket_id, t.description, t.duration, t.priority, t.status, e.first_name
+FROM tickets t
+JOIN employees e ON t.employee_id = e.employee_id
+WHERE t.status = 'In Progress' AND t.duration >= 20;
 
-echo "===== TOP 5 CPU PROCESSES ====="
-ps aux --sort=-%cpu | head -n 6
 
-} > $LOGFILE
+SELECT t.description, t.duration, t.ticket_id, t.status, e.first_name, e.location, t.priority
+FROM tickets t
+JOIN employees e ON t.employee_id = e.employee_id
+WHERE t.priority = 'High'
+  AND (t.description LIKE '%malware%' OR e.location = 'Maryland')
+ORDER BY t.description ASC, t.duration DESC, t.ticket_id ASC;
 
-# Compress report
-tar -czf $BACKUP -C $BASE/logs $(basename $LOGFILE)
 
-echo "Report created: $LOGFILE"
-echo "Backup created: $BACKUP"
+SELECT CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+       SUM(t.duration) AS total_duration
+FROM employees e
+JOIN tickets t ON e.employee_id = t.employee_id
+WHERE t.status = 'Completed'
+GROUP BY employee_name
+ORDER BY total_duration DESC, employee_name ASC;
+
+
+SELECT CONCAT(e.first_name, ' ', e.last_name) AS employee_name,
+       SUM(t.duration) AS total_duration,
+       COUNT(*) AS completed_tickets
+FROM employees e
+JOIN tickets t ON e.employee_id = t.employee_id
+WHERE t.status = 'Completed'
+GROUP BY employee_name
+ORDER BY completed_tickets DESC, employee_name ASC;
+
+
+SELECT t.priority, t.description, AVG(t.duration) AS avg_duration
+FROM tickets t
+JOIN employees e ON t.employee_id = e.employee_id
+WHERE e.location = 'California' AND t.status IN ('Completed', 'In Progress')
+GROUP BY t.priority, t.description
+ORDER BY t.priority ASC, t.description ASC;
+
+
+SELECT DISTINCT description AS ticket_type
+FROM tickets;
