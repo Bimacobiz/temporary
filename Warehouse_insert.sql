@@ -1,3 +1,12 @@
+
+
+
+
+
+
+
+
+
 # SQL code to insert data for Warehouse Assignment 
 use warehouse;
 
